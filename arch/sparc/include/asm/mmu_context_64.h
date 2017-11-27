@@ -11,6 +11,7 @@
 
 #include <asm/spitfire.h>
 #include <asm-generic/mm_hooks.h>
+#include <asm/percpu.h>
 
 static inline void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
 {
