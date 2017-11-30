@@ -50,7 +50,7 @@ config SCSI_UFSHCD
 	  However, do not compile this as a module if your root file system
 	  (the one containing the directory /) is located on a UFS device.
 
-config SCSI_UFSHCD_RAMDISK
+config SCSI_UFSHCD_RAMUFS
 	tristate "UFS Host Controller Ramdisk Driver"
 	depends on SCSI_UFSHCD && NVM
 

@@ -59,7 +59,7 @@ static int __init ramdisk_init(void)
 	ret = configfs_register_subsystem(&ramdisk_subsys);
 	if (ret) {
 		pr_err("RAMDISK: ramdisk_init: configfs_register_subsystem() failed\n");
-		return out;
+		goto out;
 	}
 
 	pr_err("RAMDISK: ramdisk loaded\n");
