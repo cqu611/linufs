@@ -9,6 +9,19 @@
 #include <linux/sysfs.h>
 #include <linux/slab.h>
 #include <linux/init.h>
+#include <linux/ctype.h>
+
+/* space or '=' */
+#define RU_PARSE_STATUS_SPACE	0
+#define RU_PARSE_STATUS_ERROR	1
+#define RU_PARSE_STATUS_MATCHED	2
+/* match failed */
+#define RU_PARSE_STATUS_UNMATCH	3
+/* out of range */
+#define RU_PARSE_STATUS_RANGED	4
+
+
+
 
 struct ufs_ppa_format {
 	u8	ch_off;
@@ -73,9 +86,23 @@ struct ramufs {
 
 	struct gendisk *gd;
 	struct kobject *kobj;
-	
-	struct configfs_subsystem *ramufs_subsys;
+	struct device *dev;
 };
 //#define kobj_to_ramufs(x) container_of(x, struct ramufs, kobj)
+
+struct ufs_geo_config_attr_tbl {
+	char name[10];
+	u16 offset;
+	u8 typesize;
+};
+
+int __parse_config_ufs_geo(const char *buf, size_t count, struct ufs_geo *geo);
+int __parse_config_ppa_fmt(const char *buf, size_t count, struct ufs_geo *geo);
+int __parse_config_cfg_grp(const char *buf, size_t count, struct ufs_geo *geo);
+int __parse_config_l2p_tbl(const char *buf, size_t count, struct ufs_geo *geo);
+
+
+
+
 
 #endif /* RAM_UFS_H */
