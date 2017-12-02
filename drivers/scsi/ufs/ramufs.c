@@ -133,7 +133,7 @@ static ssize_t __show_l2p_tbl(char *buf)
 	int i, j, ret=0;
 	src = geo.ggrp.l2ptbl.mlc.pairs;
 	dst = hex;
-	u64 id=0, k;
+	u64 k, id=0;
 
 	for (i=0; i < 8; i++) {
 		k = geo.ggrp.l2ptbl.id[i];

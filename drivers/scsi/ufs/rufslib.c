@@ -1,15 +1,15 @@
 #include "ramufs.h"
 
-static const struct ufs_geo_config_attr_tbl prs_cfg_ufs_geo[] = {
+static struct ufs_geo_config_attr_tbl prs_cfg_ufs_geo[] = {
 	{ "version", 0, 1 },
 	{ "vnvmt", 1, 1 },
 	{ "cgrps", 2, 1 },
 	{ "cap", 3, 4 },
 	{ "dom", 7, 4 },
-	{ NULL }
+	{ "", 0, 0 }
 };
 
-static const struct ufs_geo_config_attr_tbl prs_cfg_ppa_fmt[] = {
+static struct ufs_geo_config_attr_tbl prs_cfg_ppa_fmt[] = {
 	{ "ch_off", 11, 1 },
 	{ "ch_len", 12, 1 },
 	{ "lun_off", 13, 1 },
@@ -22,10 +22,10 @@ static const struct ufs_geo_config_attr_tbl prs_cfg_ppa_fmt[] = {
 	{ "pg_len", 20, 1 },
 	{ "sect_off", 21, 1 },
 	{ "sect_len", 22, 1 },
-	{ NULL, 0, 0 }
+	{ "", 0, 0 }
 };
 
-static const struct ufs_geo_config_attr_tbl prs_cfg_cfg_grp[] = {
+static struct ufs_geo_config_attr_tbl prs_cfg_cfg_grp[] = {
 	{ "mtype", 23, 1 },
 	{ "fmtype", 24, 1 },
 	{ "num_ch", 25, 1 },
@@ -45,14 +45,14 @@ static const struct ufs_geo_config_attr_tbl prs_cfg_cfg_grp[] = {
 	{ "mpos", 63, 4 },
 	{ "mccap", 67, 4 },
 	{ "cpar", 71, 2 },
-	{ NULL, 0, 0 }
+	{ "", 0, 0 }
 };
 
-static const struct ufs_geo_config_attr_tbl prs_cfg_l2p_tbl[] = {
+static struct ufs_geo_config_attr_tbl prs_cfg_l2p_tbl[] = {
 	{ "id", 73, 8 },
 	{ "num_pairs", 81, 2 },
 	/* { "pairs", 83, 886 }, */	/* do not set pairs into current table */
-	{ NULL, 0, 0 }
+	{ "", 0, 0 }
 };
 
 
@@ -146,7 +146,7 @@ static inline void parse_config_init(char *tmpbuf, const char *buf, int count)
 static int parse_config_item(const char *buf, int *pos, size_t count, 
 				struct ufs_geo *geo, struct ufs_geo_config_attr_tbl *attr)
 {
-	int ret, offset;
+	int ret=0, offset;
 	void *p;
 	u64 val;
 
@@ -174,7 +174,7 @@ static int parse_config_item(const char *buf, int *pos, size_t count,
 
 int __parse_config_ufs_geo(const char *buf, size_t count, struct ufs_geo *geo)
 {
-	int i, ret = 0, status;
+	int i, ret=0, status;
 	char *tmpbuf;
 
 	tmpbuf = kmalloc(count, GFP_KERNEL);
@@ -206,7 +206,7 @@ out:
 int __parse_config_ppa_fmt(const char *buf, size_t count, struct ufs_geo *geo)
 {
 
-	int i, ret = 0, status;
+	int i, ret=0, status;
 	char *tmpbuf;
 	
 	tmpbuf = kmalloc(count, GFP_KERNEL);
@@ -236,7 +236,7 @@ out:
 
 int __parse_config_cfg_grp(const char *buf, size_t count, struct ufs_geo *geo)
 {
-	int i, ret = 0, status;
+	int i, ret=0, status;
 	char *tmpbuf;
 	
 	tmpbuf = kmalloc(count, GFP_KERNEL);
@@ -303,7 +303,7 @@ void __parse_config_l2p_tbl_cpy(const char *buf, size_t count,
 
 int __parse_config_l2p_tbl(const char *buf, size_t count, struct ufs_geo *geo)
 {
-	int i, ret = 0, status;
+	int i, ret=0, status;
 	char *tmpbuf;
 	
 	tmpbuf = kmalloc(count, GFP_KERNEL);
