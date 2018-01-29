@@ -177,6 +177,7 @@ hv_storvsc-y			:= storvsc_drv.o
 sd_mod-objs	:= sd.o
 sd_mod-$(CONFIG_BLK_DEV_INTEGRITY) += sd_dif.o
 sd_mod-$(CONFIG_BLK_DEV_ZONED) += sd_zbc.o
+sd_mod-$(CONFIG_NVM) += lightnvm.o
 
 sr_mod-objs	:= sr.o sr_ioctl.o sr_vendor.o
 ncr53c8xx-flags-$(CONFIG_SCSI_ZALON) \

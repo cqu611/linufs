@@ -1487,6 +1487,12 @@ static int sd_ioctl(struct block_device *bdev, fmode_t mode,
 			error = scsi_ioctl(sdp, cmd, p);
 			break;
 		default:
+#ifdef CONFIG_NVM
+            if (sdkp->nvmdev) {
+                error = ufs_nvm_ioctl(sdkp, cmd, p);
+                break;
+            }
+#endif
 			error = scsi_cmd_blk_ioctl(bdev, mode, cmd, p);
 			if (error != -ENOTTY)
 				break;
@@ -3385,6 +3391,15 @@ static int sd_probe(struct device *dev)
 	get_device(&sdkp->dev);	/* prevent release before async_schedule */
 	async_schedule_domain(sd_probe_async, sdkp, &scsi_sd_probe_domain);
 
+    if (ufs_nvm_supported(sdp->host->wmanufacturerid) &&
+            ufs_nvm_register(sdkp, gd->disk_name))
+    {
+        dev_warn(dev, "%s: LightNVM init failed\n", __func__);
+        goto out_free_index;
+    }
+    if (sdkp->nvmdev && ufs_nvm_register_sysfs(sdkp))
+        pr_warn("%s: Failed to register LightNVM sysfs group for identification\n", gd->disk_name);
+
 	return 0;
 
  out_free_index:
@@ -3419,6 +3434,11 @@ static int sd_remove(struct device *dev)
 	sdkp = dev_get_drvdata(dev);
 	devt = disk_devt(sdkp->disk);
 	scsi_autopm_get_device(sdkp->device);
+
+    if (sdkp->nvmdev) {
+        ufs_nvm_unregister_sysfs(sdkp);
+        ufs_nvm_unregister(sdkp);
+    }
 
 	async_synchronize_full_domain(&scsi_sd_pm_domain);
 	async_synchronize_full_domain(&scsi_sd_probe_domain);

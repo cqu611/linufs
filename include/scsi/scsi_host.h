@@ -612,6 +612,7 @@ struct Scsi_Host {
 	 * assumed.
 	 */
 	unsigned short max_cmd_len;
+    u16 wmanufacturerid;
 
 	int this_id;
 	int can_queue;

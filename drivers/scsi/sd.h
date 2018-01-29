@@ -2,6 +2,8 @@
 #ifndef _SCSI_DISK_H
 #define _SCSI_DISK_H
 
+#include <linux/lightnvm.h>
+
 /*
  * More than enough for everybody ;)  The huge number of majors
  * is a leftover from 16bit dev_t days, we don't really need that
@@ -72,6 +74,7 @@ struct scsi_disk {
 	struct scsi_device *device;
 	struct device	dev;
 	struct gendisk	*disk;
+    struct nvm_dev *nvmdev;
 	struct opal_dev *opal_dev;
 #ifdef CONFIG_BLK_DEV_ZONED
 	unsigned int	nr_zones;
@@ -325,5 +328,27 @@ static inline void sd_zbc_complete(struct scsi_cmnd *cmd,
 				   struct scsi_sense_hdr *sshdr) {}
 
 #endif /* CONFIG_BLK_DEV_ZONED */
+
+#ifdef CONFIG_NVM
+int ufs_nvm_supported(u16 vendor_id);
+int ufs_nvm_register(struct scsi_disk *sd, char *disk_name);
+void ufs_nvm_unregister(struct scsi_disk *sd);
+int ufs_nvm_register_sysfs(struct scsi_disk *sd);
+void ufs_nvm_unregister_sysfs(struct scsi_disk *sd);
+int ufs_nvm_ioctl(struct scsi_disk *sd, unsigned int cmd, void __user *arg);
+#else
+static inline int ufs_nvm_supported(u16 vendor_id) { return 0; }
+static inline int ufs_nvm_register(struct scsi_disk *sd, char *disk_name)
+{
+    sd->nvmdev = NULL;
+    return 0;
+}
+static inline void ufs_nvm_unregister(struct scsi_disk *sd) {}
+static inline int ufs_nvm_register_sysfs(struct scsi_disk *sd)
+{ return 0; }
+static inline void ufs_nvm_unregister_sysfs(struct scsi_disk *sd) {}
+static inline int ufs_nvm_ioctl(struct scsi_disk *sd, unsigned int cmd, void __user *arg)
+{ return 0; }
+#endif /* CONFIG_NVM */
 
 #endif /* _SCSI_DISK_H */
